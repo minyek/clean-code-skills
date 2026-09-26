@@ -1,48 +1,43 @@
 ---
 name: boy-scout
-description: Use when fixing, editing, changing, debugging, or working with any Python code. Applies the Boy Scout Rule—always leave code cleaner than you found it. Orchestrates other clean code skills as needed.
-when_to_use: |
-  Also trigger on: "while you're at it", "any quick wins", "improve this a bit", "anything else obviously wrong", or when editing existing Python and an adjacent small cleanup is possible alongside the asked-for change.
+description: Use after completing a code change or before committing — applies the boy-scout rule to leave touched code cleaner than found.
 ---
 
 # The Boy Scout Rule
 
-> "Always leave the campground cleaner than you found it."
-> — Robert Baden-Powell
+> "Always check a module in cleaner than when you checked it out." — Robert C. Martin
 
-> "Always check a module in cleaner than when you checked it out."
-> — Robert C. Martin, *Clean Code*
+## Overview
 
-## The Philosophy
+Every code change should leave the code a little better than you found it. Not perfect — just better. Over time, better compounds into excellent.
 
-You don't have to make every module perfect. You simply have to make it **a little bit better** than when you found it.
+## When to Use
 
-If we all followed this simple rule:
-- Our systems would gradually get better as they evolved
-- Teams would care for the system as a whole
-- The relentless deterioration of software would end
+- Every time you touch code for any reason
+- After fixing a bug — clean up what's around it
+- During implementation — improve what you see as you go
 
-## When Working on Code
+**Not for:** Massive refactors unrelated to your task. Keep changes proportional.
 
-Every time you touch code, look for **at least one small improvement**:
+## Quick Wins (Do Immediately)
 
-### Quick Wins (Do These Immediately)
-- Rename a poorly named variable → triggers `clean-names`
-- Delete a redundant comment → triggers `clean-comments`
+- Rename a poorly named variable (**SEE ALSO:** `clean-names`)
+- Delete a redundant comment (**SEE ALSO:** `clean-comments`)
 - Remove dead code or unused imports
 - Replace a magic number with a named constant
 - Extract a deeply nested block into a well-named function
 
-### Deeper Improvements (When Time Allows)
-- Split a function that does multiple things → triggers `clean-functions`
-- Remove duplication (DRY) → triggers `clean-general`
-- Add missing boundary checks
-- Improve test coverage → triggers `clean-tests`
+## Deeper Improvements (When Time Allows)
 
-## The Rule in Practice
+- Split a multi-responsibility function (**SEE ALSO:** `clean-functions`)
+- Remove duplication (DRY) (**SEE ALSO:** `clean-general`)
+- Add missing boundary checks
+- Improve test coverage (**SEE ALSO:** `clean-tests`)
+
+## Example
 
 ```python
-# You're asked to fix a bug in this function:
+# Asked to fix a bug in this function — don't just fix and leave:
 def proc(d, x, flag=False):
     # process data
     for i in d:
@@ -53,7 +48,6 @@ def proc(d, x, flag=False):
                 x.append(i)
     return x
 
-# Don't just fix the bug and leave.
 # Leave it cleaner:
 TAX_RATE = 0.0825
 
@@ -66,56 +60,25 @@ def process_positive_values(
     return [v * rate for v in values if v > 0]
 ```
 
-**What changed:**
-- ✅ Descriptive function name (N1)
-- ✅ Clear parameter names (N1)
-- ✅ Type hints (P3)
-- ✅ Named constant for magic number (G25)
-- ✅ No output argument mutation (F2)
-- ✅ Useful docstring (C4)
+Fixed: N1 (names), G25 (magic number), F2 (no mutation), C4 (useful docstring), P3 (type hints).
 
 ## Skill Orchestration
 
-This skill coordinates with specialized skills based on what you're doing:
-
 | Task | Trigger Skill |
 |------|---------------|
-| Writing/reviewing any Python | `python-clean-code` (master) |
+| Writing/reviewing any Python | `python-clean-code` (master reference) |
 | Naming variables, functions, classes | `clean-names` |
 | Writing or editing comments | `clean-comments` |
 | Creating or refactoring functions | `clean-functions` |
 | Reviewing code quality | `clean-general` |
 | Writing or reviewing tests | `clean-tests` |
+| Systematic file-level review | `clean-code-review` (full checklist) |
 
-## The Mindset
+## AI Behaviour
 
-**Don't:**
-- Leave code worse than you found it
-- Say "that's not my code"
-- Wait for a dedicated refactoring sprint
-- Make massive changes unrelated to your task
-
-**Do:**
-- Make one small improvement with every commit
-- Fix what you see, even if you didn't break it
-- Keep changes proportional to your task
-- Leave a trail of quality improvements
-
-## AI Behavior
-
-When working on code:
-1. Complete the requested task first
-2. Identify at least one small cleanup opportunity
-3. Apply the appropriate specialized skill
-4. Note the improvement made (e.g., "Also cleaned up: renamed `x` to `results` for clarity")
+When working on code, complete the requested task first. Then make the small cleanups the touched code warrants — none, if it is already clean — using the matching specialized skill, and report each with rule number and severity (e.g., "[nit] N1: renamed `d` to `daily_returns`").
 
 When reviewing code:
 1. Load `python-clean-code` for comprehensive rule checking
-2. Flag violations by rule number
+2. Use `clean-code-review` for systematic file-level review with severity labels
 3. Suggest incremental improvements, not complete rewrites
-
-## The Boy Scout Promise
-
-Every piece of code you touch gets a little better. Not perfect—just better.
-
-Over time, better compounds into excellent.

@@ -1,11 +1,11 @@
 ---
 name: python-clean-code
-description: Use when writing, fixing, editing, reviewing, or refactoring any Python code. Enforces Robert Martin's complete Clean Code catalog—naming, functions, comments, DRY, and boundary conditions.
+description: Use when looking up a Python Clean Code rule by number (N1-N7, F1-F4, C1-C5, G1-G36, P1-P3, T1-T9), or when reviewing Python against Martin's Clean Code rule catalog.
 ---
 
 # Clean Python: Complete Reference
 
-Enforces all Clean Code principles from Robert C. Martin's Chapter 17, adapted for Python.
+All Clean Code principles from Robert C. Martin's Chapter 17, adapted for Python.
 
 ## Comments (C1-C5)
 - C1: No metadata in comments (use Git)
@@ -26,10 +26,10 @@ Enforces all Clean Code principles from Robert C. Martin's Chapter 17, adapted f
 
 ## General (G1-G36)
 - G1: One language per file
-- G2: Implement expected behavior
+- G2: Implement expected behaviour
 - G3: Handle boundary conditions
 - G4: Don't override safeties
-- G5: DRY - no duplication
+- G5: DRY — no duplication
 - G6: Consistent abstraction levels
 - G7: Base classes don't know children
 - G8: Minimize public interface
@@ -63,10 +63,9 @@ Enforces all Clean Code principles from Robert C. Martin's Chapter 17, adapted f
 - G36: Law of Demeter (no train wrecks)
 
 ## Python-Specific (P1-P3)
-These adapt the Java-specific rules (J1-J3) to Python conventions:
-- P1: No wildcard imports (`from x import *`) — opposite of Java, per PEP 8
-- P2: Use Enums, not magic constants — same principle as J3
-- P3: Type hints on public interfaces — Python's equivalent of Java's static typing
+- P1: No wildcard imports (`from x import *`) — per PEP 8
+- P2: Use Enums, not magic constants
+- P3: Type hints on public interfaces
 
 ## Names (N1-N7)
 - N1: Choose descriptive names
@@ -88,7 +87,7 @@ These adapt the Java-specific rules (J1-J3) to Python conventions:
 - T8: Check coverage when debugging
 - T9: Tests must be fast (< 100ms each)
 
-## Quick Reference Table
+## Most Violated Rules
 
 | Category | Rule | One-Liner |
 |----------|------|-----------|
@@ -97,23 +96,20 @@ These adapt the Java-specific rules (J1-J3) to Python conventions:
 | | C5 | No commented-out code |
 | **Functions** | F1 | Max 3 arguments |
 | | F3 | No flag arguments |
-| | F4 | Delete dead functions |
-| **General** | G5 | DRY—no duplication |
+| **General** | G5 | DRY — no duplication |
 | | G9 | Delete dead code |
 | | G16 | No obscured intent |
-| | G23 | Polymorphism over if/else |
-| | G25 | Named constants, not magic numbers |
+| | G25 | Named constants |
 | | G30 | Functions do one thing |
 | | G36 | Law of Demeter (one dot) |
 | **Names** | N1 | Descriptive names |
-| | N5 | Name length matches scope |
 | **Tests** | T5 | Test boundary conditions |
 | | T9 | Tests must be fast |
 
-## Anti-Patterns (Don't → Do)
+## Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
+| Don't | Do |
+|-------|-----|
 | Comment every line | Delete obvious comments |
 | Helper for one-liner | Inline the code |
 | `from x import *` | Explicit imports |
@@ -123,7 +119,9 @@ These adapt the Java-specific rules (J1-J3) to Python conventions:
 | `obj.a.b.c.value` | `obj.get_value()` |
 | 100+ line function | Split by responsibility |
 
-## AI Behavior
+## AI Behaviour
 
-When reviewing code, identify violations by rule number (e.g., "G5 violation: duplicated logic").
-When fixing or editing code, report what was fixed (e.g., "Fixed: extracted magic number to `SECONDS_PER_DAY` (G25)").
+When reviewing: identify violations by rule number and severity (e.g., "[important] G5: duplicated validation logic").
+When fixing: report what was fixed (e.g., "Fixed [nit] G25: extracted magic number to `SECONDS_PER_DAY`").
+
+**SEE ALSO:** `clean-code-review` — applying these rules to a specific file review.

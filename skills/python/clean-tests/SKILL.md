@@ -1,22 +1,26 @@
 ---
 name: clean-tests
-description: Use when writing, fixing, editing, or refactoring Python tests. Enforces Clean Code principles—fast tests, boundary coverage, one assert per test.
+description: Use when writing, fixing, or reviewing tests — missing boundary tests, slow tests, flaky tests, skipped tests, tests with multiple asserts, or tests coupled to implementation details.
 when_to_use: |
   Also trigger on: slow or flaky tests, `@pytest.mark.skip` without a clear reason, tests that only cover the happy path, tests with multiple assertions about different concepts, missing boundary cases (empty input, off-by-one, page zero), or asks about "coverage gap", "edge case", "did we test".
 ---
 
-# Clean Tests
+# Clean Tests (T1-T9)
 
-## T1: Insufficient Tests
+## Overview
 
-Test everything that could possibly break. Use coverage tools as a guide, not a goal.
+Tests should be fast, independent, and test one concept each. Test everything that could break, especially boundary conditions.
+
+## Rules
+
+### T1: Test Everything That Could Break
 
 ```python
-# Bad - only tests happy path
+# Bad — only happy path
 def test_divide():
     assert divide(10, 2) == 5
 
-# Good - tests edge cases too
+# Good — edge cases too
 def test_divide_normal():
     assert divide(10, 2) == 5
 
@@ -28,159 +32,94 @@ def test_divide_negative():
     assert divide(-10, 2) == -5
 ```
 
-## T2: Use a Coverage Tool
-
-Coverage tools report gaps in your testing strategy. Don't ignore them.
+### T2: Use Coverage Tools
 
 ```bash
-# Run with coverage
 pytest --cov=myproject --cov-report=term-missing
-
-# Aim for meaningful coverage, not 100%
 ```
 
-## T3: Don't Skip Trivial Tests
+Aim for meaningful coverage, not 100%.
 
-Trivial tests document behavior and catch regressions. They're worth more than their cost.
+### T3: Don't Skip Trivial Tests
+
+Trivial tests document behaviour and catch regressions.
 
 ```python
-# Worth having - documents expected behavior
 def test_user_default_role():
     user = User(name="Alice")
     assert user.role == "member"
 ```
 
-## T4: An Ignored Test Is a Question About an Ambiguity
+### T4: Ignored Test = Ambiguity Question
 
-Don't use `@pytest.mark.skip` to hide problems. Either fix the test or delete it.
+Don't use `@pytest.mark.skip` to hide problems: fix the test. Skipping or deleting a test needs the user's approval.
 
-```python
-# Bad - hiding a problem
-@pytest.mark.skip(reason="flaky, fix later")
-def test_async_operation():
-    ...
-
-# Good - either fix it or document why it's skipped
-@pytest.mark.skip(reason="Requires Redis, see CONTRIBUTING.md for setup")
-def test_cache_invalidation():
-    ...
-```
-
-## T5: Test Boundary Conditions
+### T5: Test Boundary Conditions
 
 Bugs congregate at boundaries. Test them explicitly.
 
 ```python
 def test_pagination_boundaries():
     items = list(range(100))
-    
-    # First page
-    assert paginate(items, page=1, size=10) == items[0:10]
-    
-    # Last page
-    assert paginate(items, page=10, size=10) == items[90:100]
-    
-    # Beyond last page
-    assert paginate(items, page=11, size=10) == []
-    
-    # Page zero (invalid)
+    assert paginate(items, page=1, size=10) == items[0:10]     # First page
+    assert paginate(items, page=10, size=10) == items[90:100]   # Last page
+    assert paginate(items, page=11, size=10) == []              # Beyond last
+    assert paginate([], page=1, size=10) == []                  # Empty list
     with pytest.raises(ValueError):
-        paginate(items, page=0, size=10)
-    
-    # Empty list
-    assert paginate([], page=1, size=10) == []
+        paginate(items, page=0, size=10)                        # Invalid
 ```
 
-## T6: Exhaustively Test Near Bugs
+### T6: Exhaustively Test Near Bugs
 
 When you find a bug, write tests for all similar cases. Bugs cluster.
 
-```python
-# Found bug: off-by-one in date calculation
-# Now test ALL date boundaries
-def test_month_boundaries():
-    assert last_day_of_month(2024, 1) == 31  # January
-    assert last_day_of_month(2024, 2) == 29  # Leap year February
-    assert last_day_of_month(2023, 2) == 28  # Non-leap February
-    assert last_day_of_month(2024, 4) == 30  # 30-day month
-    assert last_day_of_month(2024, 12) == 31 # December
-```
+### T7: Patterns of Failure Are Revealing
 
-## T7: Patterns of Failure Are Revealing
+When tests fail, look for patterns — they point to deeper issues.
 
-When tests fail, look for patterns. They often point to deeper issues.
+### T8: Coverage Patterns Are Revealing
 
-```python
-# If all async tests fail intermittently,
-# the problem isn't the tests—it's the async handling
-```
+Untested code paths often reveal design problems. If you can't easily test a function, it probably does too much.
 
-## T8: Test Coverage Patterns Can Be Revealing
-
-Look at which code paths are untested. Often they reveal design problems.
-
-```python
-# If you can't easily test a function, it probably does too much
-# Refactor for testability
-```
-
-## T9: Tests Should Be Fast
+### T9: Tests Must Be Fast
 
 Slow tests don't get run. Keep unit tests under 100ms each.
 
 ```python
-# Bad - hits real database
+# Bad — hits real database
 def test_user_creation():
     db = connect_to_database()  # Slow!
-    user = db.create_user("Alice")
-    assert user.name == "Alice"
+    ...
 
-# Good - uses mock or in-memory
+# Good — in-memory
 def test_user_creation():
     db = InMemoryDatabase()
-    user = db.create_user("Alice")
-    assert user.name == "Alice"
+    ...
 ```
 
-## Test Organization
+## FIRST Principles
 
-### F.I.R.S.T. Principles
-
-- **Fast**: Tests should run quickly
-- **Independent**: Tests shouldn't depend on each other
+- **Fast**: Run quickly
+- **Independent**: Don't depend on each other
 - **Repeatable**: Same result every time, any environment
 - **Self-Validating**: Pass or fail, no manual inspection
-- **Timely**: Written before or with the code, not after
+- **Timely**: Written before or with the code
 
-### One Concept Per Test
+## One Concept Per Test
 
 ```python
-# Bad - testing multiple things
+# Bad — multiple concepts
 def test_user():
     user = User("Alice", "alice@example.com")
     assert user.name == "Alice"
-    assert user.email == "alice@example.com"
     assert user.is_valid()
     user.activate()
     assert user.is_active
 
-# Good - one concept each
-def test_user_stores_name():
-    user = User("Alice", "alice@example.com")
-    assert user.name == "Alice"
-
-def test_user_stores_email():
-    user = User("Alice", "alice@example.com")
-    assert user.email == "alice@example.com"
-
-def test_new_user_is_valid():
-    user = User("Alice", "alice@example.com")
-    assert user.is_valid()
-
-def test_user_can_be_activated():
-    user = User("Alice", "alice@example.com")
-    user.activate()
-    assert user.is_active
+# Good — one concept each
+def test_user_stores_name(): ...
+def test_new_user_is_valid(): ...
+def test_user_can_be_activated(): ...
 ```
 
 ## Quick Reference
@@ -190,9 +129,21 @@ def test_user_can_be_activated():
 | T1 | Test everything that could break |
 | T2 | Use coverage tools |
 | T3 | Don't skip trivial tests |
-| T4 | Ignored test = ambiguity question |
+| T4 | Ignored test = ambiguity |
 | T5 | Test boundary conditions |
 | T6 | Exhaustively test near bugs |
-| T7 | Look for patterns in failures |
-| T8 | Check coverage when debugging |
-| T9 | Tests must be fast (<100ms) |
+| T7 | Patterns in failures reveal deeper issues |
+| T8 | Coverage gaps reveal design problems |
+| T9 | Tests must be fast (< 100ms) |
+
+## Common Mistakes
+
+| Mistake | Fix |
+|---------|-----|
+| Tests pass but assert nothing meaningful | Every test must fail if the production code is wrong; review each assert |
+| Shared mutable fixture state between tests | Use function-scoped fixtures or explicit resets; flakiness compounds across tests |
+| Asserting implementation details (mock call counts) instead of observable behaviour | Assert outcomes, not internals; tests should survive refactors |
+| One test method asserting many concepts | Split per concept (see One Concept Per Test); failure messages stay diagnostic |
+| Catching the bug only in the test that exposed it | Apply T6 — search for sibling cases and pin them too |
+
+**SEE ALSO:** `clean-code-review` — test design principles (testability, determinism, no test logic) in section TD1-TD6.

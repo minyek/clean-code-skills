@@ -1,128 +1,93 @@
 ---
 name: clean-names
-description: Use when naming, renaming, or fixing names of variables, functions, classes, or modules in Python. Enforces Clean Code principles—descriptive names, appropriate length, no encodings.
+description: Use when naming, renaming, or fixing names of variables, functions, classes, or modules — vague names, implementation-leaking names, Hungarian notation, or names that hide side effects.
 when_to_use: |
   Also trigger on: single-letter or cryptic identifiers (`d`, `x`, `proc`), Hungarian notation (`str_name`, `lst_users`, `i_count`), `I`-prefixed classes, function names that hide side effects (e.g. `get_config` that also writes a file), non-standard abbreviations, or asks like "rename this", "what does this variable mean", "clearer name".
 ---
 
-# Clean Names
+# Clean Names (N1-N7)
 
-## N1: Choose Descriptive Names
+## Overview
 
 Names should reveal intent. If a name requires a comment, it doesn't reveal its intent.
 
+## Rules
+
+### N1: Choose Descriptive Names
+
 ```python
-# Bad - what is d?
+# Bad — what is d?
 d = 86400
 
-# Good - obvious meaning
+# Good — obvious meaning
 SECONDS_PER_DAY = 86400
-
-# Bad - what does this function do?
-def proc(lst):
-    return [x for x in lst if x > 0]
-
-# Good - intent is clear
-def filter_positive_numbers(numbers):
-    return [n for n in numbers if n > 0]
 ```
 
-## N2: Choose Names at the Appropriate Level of Abstraction
+### N2: Right Abstraction Level
 
-Don't pick names that communicate implementation; choose names that reflect the level of abstraction of the class or function.
+Don't expose implementation in the name.
 
 ```python
-# Bad - too implementation-specific
-def get_dict_of_user_ids_to_names():
-    ...
+# Bad
+def get_dict_of_user_ids_to_names(): ...
 
-# Good - abstracts the data structure
-def get_user_directory():
-    ...
+# Good
+def get_user_directory(): ...
 ```
 
-## N3: Use Standard Nomenclature Where Possible
+### N3: Standard Nomenclature
 
-Use terms from the domain, design patterns, or well-known conventions.
+Use domain terms, design patterns, and well-known conventions.
 
 ```python
-# Good - uses pattern name
 class UserFactory:
     def create(self, data): ...
 
-# Good - uses domain term
 def calculate_amortization(principal, rate, term): ...
 ```
 
-## N4: Unambiguous Names
-
-Choose names that make the workings of a function or variable unambiguous.
+### N4: Unambiguous Names
 
 ```python
-# Bad - ambiguous
-def rename(old, new):
-    ...
+# Bad
+def rename(old, new): ...
 
-# Good - clear what's being renamed
-def rename_file(old_path: Path, new_path: Path):
-    ...
+# Good
+def rename_file(old_path: Path, new_path: Path): ...
 ```
 
-## N5: Use Longer Names for Longer Scopes
+### N5: Length Matches Scope
 
-Short names are fine for tiny scopes. Longer scopes need longer, more descriptive names.
+Short names for tiny scopes. Long, descriptive names for globals and module-level.
 
 ```python
-# Good - short name for tiny scope
-total = sum(x for x in numbers)
-
-# Good - longer name for module-level constant
-MAX_RETRY_ATTEMPTS_BEFORE_FAILURE = 5
-
-# Bad - short name at module level
-MAX = 5
+total = sum(x for x in numbers)          # Fine — tiny scope
+MAX_RETRY_ATTEMPTS_BEFORE_FAILURE = 5     # Good — module level
+MAX = 5                                    # Bad — too short for module level
 ```
 
-## N6: Avoid Encodings
+### N6: No Encodings
 
-Don't encode type or scope information into names. Modern editors make this unnecessary.
+Don't encode type or scope information. Modern editors make this unnecessary.
 
 ```python
-# Bad - Hungarian notation
+# Bad — Hungarian notation
 str_name = "Alice"
 lst_users = []
-i_count = 0
 
-# Good - clean names
+# Good
 name = "Alice"
 users = []
-count = 0
-
-# Bad - interface prefix
-class IUserRepository:
-    ...
-
-# Good - just name it
-class UserRepository:
-    ...
 ```
 
-## N7: Names Should Describe Side Effects
-
-If a function does something beyond what its name suggests, the name is misleading.
+### N7: Describe Side Effects
 
 ```python
-# Bad - name doesn't mention file creation
-def get_config():
-    if not config_path.exists():
-        config_path.write_text("{}")  # Hidden side effect!
-    return json.loads(config_path.read_text())
+# Bad — hides file creation
+def get_config(): ...
 
-# Good - name reveals behavior
-def get_or_create_config():
-    if not config_path.exists():
-        config_path.write_text("{}")
-    return json.loads(config_path.read_text())
+# Good — reveals behaviour
+def get_or_create_config(): ...
 ```
 
 ## Quick Reference
@@ -130,9 +95,19 @@ def get_or_create_config():
 | Rule | Principle | Example |
 |------|-----------|---------|
 | N1 | Descriptive names | `SECONDS_PER_DAY` not `d` |
-| N2 | Right abstraction level | `get_user_directory()` not `get_dict_of_...` |
+| N2 | Right abstraction | `get_user_directory()` not `get_dict_of_...` |
 | N3 | Standard nomenclature | `UserFactory`, `calculate_amortization` |
 | N4 | Unambiguous | `rename_file(old_path, new_path)` |
 | N5 | Length matches scope | Short for loops, long for globals |
 | N6 | No encodings | `users` not `lst_users` |
 | N7 | Describe side effects | `get_or_create_config()` |
+
+## Common Mistakes
+
+| Mistake | Fix |
+|---------|-----|
+| Renaming a public API name without checking callers | Grep first; renames have blast radius |
+| Choosing a name that documents the current implementation | Name by intent/role, not by mechanism — so the name survives refactors |
+| Single-letter loop indices in long bodies | Acceptable in tight scope; switch to a real name once the loop body grows past ~5 lines |
+| Abbreviating to save keystrokes (`usr`, `cfg`, `mgr`) | Spell it out — modern editors autocomplete; readers don't |
+| Names that lie (`get_user()` that also writes to a cache) | If it has side effects, say so (`load_user_and_cache()`) — see N7 |
