@@ -38,6 +38,15 @@ These skills encode battle-tested solutions to exactly these problems—directly
 
 Use the master skill for comprehensive coverage, or individual skills for targeted enforcement.
 
+### Install as a Claude Code plugin
+
+```
+/plugin marketplace add minyek/clean-code-skills
+/plugin install clean-code@clean-code-skills
+```
+
+Use `clean-code-typescript` for the TypeScript track. Install one track only: the tracks reuse the same skill names.
+
 ### Choose Your Language
 
 Pick one track and copy only that track's skills:

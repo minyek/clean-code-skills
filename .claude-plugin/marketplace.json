@@ -1,0 +1,27 @@
+{
+  "name": "clean-code-skills",
+  "description": "Clean Code skills for AI agents, packaged per language track so only one track is installed at a time.",
+  "owner": {
+    "name": "minyek"
+  },
+  "plugins": [
+    {
+      "name": "clean-code",
+      "source": "./",
+      "strict": false,
+      "description": "Clean Code skills for Python: boy-scout orchestrator, naming, functions, comments, general principles and tests.",
+      "license": "MIT",
+      "version": "1.0.0",
+      "skills": ["./skills/python"]
+    },
+    {
+      "name": "clean-code-typescript",
+      "source": "./",
+      "strict": false,
+      "description": "Clean Code skills for TypeScript: boy-scout orchestrator, naming, functions, comments, general principles and tests.",
+      "license": "MIT",
+      "version": "1.0.0",
+      "skills": ["./skills/typescript"]
+    }
+  ]
+}
