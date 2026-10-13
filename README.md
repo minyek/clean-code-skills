@@ -23,6 +23,7 @@ These skills encode battle-tested solutions to exactly these problems—directly
 |-------|-------|-------------|-------|
 | Python | `boy-scout` | **Orchestrator**—always leave code cleaner than you found it | Coordinates all skills |
 | Python | `python-clean-code` | **Master skill** with all 66 rules | C1-C5, E1-E2, F1-F4, G1-G36, N1-N7, P1-P3, T1-T9 |
+| Python | `clean-code-review` | File-level review checklist with severities and a report format | N, F, C, G, RF4-RF7, PY1-PY5, T, TD1-TD6 |
 | Python | `clean-comments` | Minimal, accurate commenting | C1-C5 |
 | Python | `clean-functions` | Small, focused, obvious functions | F1-F4 |
 | Python | `clean-general` | Core principles (DRY, single responsibility) | G5, G16, G23, G25, G30, G36 |
