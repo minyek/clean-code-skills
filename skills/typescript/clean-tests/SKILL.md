@@ -42,15 +42,15 @@ vitest run --coverage
 # Aim for meaningful coverage, not 100%
 ```
 
-## T3: Don't Skip Trivial Tests
+## T3: Test Trivial Behavior
 
-Trivial tests document behavior and catch regressions. They're worth more than their cost.
+Small behaviors still deserve a test: a default that changes what the code does, an edge a one-liner handles. Assert the behavior the value drives, not the value itself.
 
 ```ts
-// Worth having - documents expected behavior
-test("user default role", () => {
+test("new user cannot delete others", () => {
   const user = new User("Alice");
-  expect(user.role).toBe("member");
+  // A member can't delete others, so this asserts the default's effect.
+  expect(user.canDeleteOthers()).toBe(false);
 });
 ```
 
@@ -200,7 +200,7 @@ test("user can be activated", () => {
 |------|-----------|
 | T1 | Test everything that could break |
 | T2 | Use coverage tools |
-| T3 | Don't skip trivial tests |
+| T3 | Test trivial behavior |
 | T4 | Ignored test = ambiguity question |
 | T5 | Test boundary conditions |
 | T6 | Exhaustively test near bugs |

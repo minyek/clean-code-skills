@@ -40,14 +40,15 @@ pytest --cov=myproject --cov-report=term-missing
 
 Aim for meaningful coverage, not 100%.
 
-### T3: Don't Skip Trivial Tests
+### T3: Test Trivial Behaviour
 
-Trivial tests document behaviour and catch regressions.
+Small behaviours still deserve a test: a default that changes what the code does, an edge a one-liner handles. Assert the behaviour the value drives, not the value itself.
 
 ```python
-def test_user_default_role():
+def test_new_user_cannot_delete_others():
     user = User(name="Alice")
-    assert user.role == "member"
+    # A member can't delete others, so this asserts the default's effect.
+    assert not user.can_delete_others()
 ```
 
 ### T4: Ignored Test = Ambiguity Question
@@ -128,7 +129,7 @@ def test_user_can_be_activated(): ...
 |------|-----------|
 | T1 | Test everything that could break |
 | T2 | Use coverage tools |
-| T3 | Don't skip trivial tests |
+| T3 | Test trivial behaviour |
 | T4 | Ignored test = ambiguity |
 | T5 | Test boundary conditions |
 | T6 | Exhaustively test near bugs |

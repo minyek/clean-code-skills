@@ -80,7 +80,7 @@ These adapt the Java-specific rules (J1-J3) to TypeScript conventions:
 ## Tests (T1-T9)
 - T1: Test everything that could break
 - T2: Use coverage tools
-- T3: Don't skip trivial tests
+- T3: Test trivial behavior
 - T4: Ignored test = ambiguity question
 - T5: Test boundary conditions
 - T6: Exhaustively test near bugs

@@ -28,7 +28,7 @@ Systematic file-level code quality review using Robert Martin's Clean Code catal
 | **Smells** | RF4-RF7 | Repeated switches, data clumps, primitive obsession, middle man |
 | **GPU** | GPU1-GPU5 | Tensor loops, graph breaks, missing compile tests, CPU-tensor in forward, per-batch host syncs |
 | **Python** | PY1-PY5 | Mutable defaults, broad `except`, mutable class attrs, bare `assert` |
-| **Tests** | T1-T9 | Missing boundary tests, slow tests, skipped trivial tests |
+| **Tests** | T1-T9 | Missing boundary tests, slow tests, trivial behaviour left untested |
 | **Test Design** | TD1-TD6 | Untestable code, implementation-coupled tests, non-determinism |
 
 ## How To Use
@@ -114,7 +114,7 @@ Systematic file-level code quality review using Robert Martin's Clean Code catal
 Apply when reviewing test files:
 
 - [ ] **T1**: Everything that could break is tested
-- [ ] **T3**: Trivial tests not skipped — document behaviour, catch regressions
+- [ ] **T3**: Trivial behaviour tested by its effect, not by restating a value
 - [ ] **T5**: Boundary conditions tested
 - [ ] **T6**: Near-bug areas exhaustively tested — bugs cluster
 - [ ] **T9**: Fast tests (< 100ms for unit tests)
